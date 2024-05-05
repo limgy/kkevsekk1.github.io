@@ -1,6 +1,6 @@
 ![logo](images/logo.png)
 
-# AutoX.js
+# AutoX.js测试
 
 > **不需要Root权限** 的 JavaScript 自动化软件
 
