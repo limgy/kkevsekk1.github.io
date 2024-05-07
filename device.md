@@ -28,7 +28,7 @@ Either a changelist number, or a label like "M4-rc20".
 
 The name of the underlying board, like "goldfish".
 
-设备的主板(?)型号。
+设备的主板(?)型号，有些型号的手机读不出来。
 
 ## device.brand
 * {string}
@@ -63,7 +63,7 @@ The name of the overall product.
 
 The system bootloader version number.
 
-设备Bootloader的版本。
+设备Bootloader的版本，有些型号手机读不出来。
 
 ## device.hardware
 * {string}
@@ -84,7 +84,7 @@ A string that uniquely identifies this build.  Do not attempt to parse this valu
 
 A hardware serial number, if available. Alphanumeric only, case-insensitive.
 
-硬件序列号。
+硬件序列号，有些型号手机读不出来。
 
 ## device.sdkInt
 * {number}
@@ -110,6 +110,8 @@ Android系统版本号。例如"5.0", "7.1.1"。
 
 The base OS build the product is based on.
 
+有些型号手机读不出来。
+
 ## device.securityPatch
 * {string}
 
@@ -127,7 +129,7 @@ The current development codename, or the string "REL" if this is a release build
 ## device.getIMEI()
 * {string}
 
-返回设备的IMEI.
+返回设备的IMEI，有些设备提示没有读取设备信息权限.
 
 ## device.getAndroidId()
 * {string}
@@ -156,7 +158,7 @@ Android ID为一个用16进制字符串表示的64位整数，在设备第一次
 ## device.setBrightness(b)
 * `b` {number} 亮度，范围0~255
 
-设置当前手动亮度。如果当前是自动亮度模式，该函数不会影响屏幕的亮度。
+设置当前手动亮度。如果当前是自动亮度模式，该函数不会影响屏幕的亮度，有些设备最低只能设置为1。
 
 此函数需要"修改系统设置"的权限。如果没有该权限，会抛出SecurityException并跳转到权限设置界面。
 
