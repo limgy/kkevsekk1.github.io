@@ -96,7 +96,26 @@ for(var i = 0; i < 100; i++){
 * [x, y] ... 手势滑动路径的一系列坐标
 
 模拟手势操作。例如`gesture(1000, [0, 0], [500, 500], [500, 1000])`为模拟一个从(0, 0)到(500, 500)到(500, 100)的手势操作，时长为1秒。
+```js
+"auto";
+//画心形手势
+toast("开启开发者选项-指针位置或者在画画软件才能查看效果");
 
+setScreenMetrics(1080, 1920);
+
+var points = [10000];
+var interval = 0.1;
+var x0 = 600;
+var y0 = 1000;
+var a = 120;
+
+for(var t = 0; t < 2 * Math.PI; t += interval){
+    var x = x0 + a * (2 * Math.cos(t) - Math.cos(2 * t));
+    var y = y0 + a * (2 * Math.sin(t) - Math.sin(2 * t));
+    points.push([parseInt(x), parseInt(y)]);
+}
+gesture.apply(null, points);
+```
 ## gestures([delay1, duration1, [x1, y1], [x2, y2], ...], [delay2, duration2, [x3, y3], [x4, y4], ...], ...)
 
 同时模拟多个手势。每个手势的参数为\[delay, duration, 坐标\], delay为延迟多久(毫秒)才执行该手势；duration为手势执行时长；坐标为手势经过的点的坐标。其中delay参数可以省略，默认为0。

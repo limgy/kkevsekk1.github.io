@@ -4,7 +4,7 @@
 
 events 模块提供了监听手机通知、按键、触摸的接口。您可以用他配合自动操作函数完成自动化工作。
 
-events 本身是一个[EventEmiiter](#eventemitter), 但内置了一些事件、包括按键事件、通知事件、Toast 事件等。
+events 本身是一个[EventEmiter](#eventemitter), 但内置了一些事件、包括按键事件、通知事件、Toast 事件等。
 
 需要注意的是，事件的处理是单线程的，并且仍然在原线程执行，如果脚本主体或者其他事件处理中有耗时操作、轮询等，则事件将无法得到及时处理（会进入事件队列等待脚本主体或其他事件处理完成才执行）。例如:
 
@@ -23,6 +23,13 @@ while(true){
 ## events.emitter()
 
 返回一个新的[EventEmitter](#eventemitter)。这个 EventEmitter 没有内置任何事件。
+```js
+"ui";
+//当离开本界面时保存todoList
+ui.emitter.on("pause", () => {
+    log("exit")
+});
+```
 
 ## events.observeKey()
 

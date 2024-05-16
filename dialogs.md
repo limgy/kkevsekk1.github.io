@@ -123,7 +123,6 @@ dialogs.input("请输入您的年龄", "18").then(age => {
 *  `title` {string} 对话框的标题。
 *  `items` {Array} 对话框的选项列表，是一个字符串数组。
 * `callback` {Function} 回调函数，可选。当用户点击确定时被调用,一般用于ui模式。
-
 显示一个带有选项列表的对话框，等待用户选择，返回用户选择的选项索引(0 ~ item.length - 1)。如果用户取消了选择，返回-1。
 
 ```js
@@ -151,8 +150,11 @@ dialogs.select("请选择一个选项", ["选项A", "选项B", "选项C", "选�
 * `callback` {Function} 回调函数，可选。当用户点击确定时被调用,一般用于ui模式。
 
 显示一个单选列表对话框，等待用户选择，返回用户选择的选项索引(0 ~ item.length - 1)。如果用户取消了选择，返回-1。
-
 在ui模式下该函数返回一个`Promise`。
+```js
+var sex = dialogs.singleChoice("请选择性别", ["男", "女", "基佬", "女装", "其他"], 2);
+toast("选择了第" + (sex + 1) + "个选项");
+```
 
 ## dialogs.multiChoice(title, items[, indices, callback])
 *  `title` {string} 对话框的标题。
@@ -161,40 +163,90 @@ dialogs.select("请选择一个选项", ["选项A", "选项B", "选项C", "选�
 * `callback` {Function} 回调函数，可选。当用户点击确定时被调用,一般用于ui模式。
 
 显示一个多选列表对话框，等待用户选择，返回用户选择的选项索引的数组。如果用户取消了选择，返回`[]`。
-
 在ui模式下该函数返回一个`Promise`。
-
+```js
+var i = dialogs.multiChoice("下列作品出自李贽的是", ["《焚书》", "《西湖寻梦》", "《高太史全集》", "《续焚烧书》", "《藏书》"]);
+toast("选择了: " + i);
+if(i.length == 2 && i.toString() == [0, 4].toString()){
+    toast("答对辣");
+}else{
+    toast("答错辣");
+}
+```
 ## dialogs.build(properties)
 * `properties` {Object} 对话框属性，用于配置对话框。
 * 返回 {Dialog}
 
-创建一个可自定义的对话框，例如：
+模拟更新下载对话框，例如：
 ```js
-dialogs.build({
-    //对话框标题
-    title: "发现新版本",
-    //对话框内容
-    content: "更新日志: 新增了若干了BUG",
-    //确定键内容
-    positive: "下载",
-    //取消键内容
-    negative: "取消",
-    //中性键内容
-    neutral: "到浏览器下载",
-    //勾选框内容
-    checkBoxPrompt: "不再提示"
-}).on("positive", ()=>{
-    //监听确定键
-    toast("开始下载....");
-}).on("neutral", ()=>{
-    //监听中性键
-    app.openUrl("https://www.autojs.org");
-}).on("check", (checked)=>{
-    //监听勾选框
-    log(checked);
-}).show();
-```
 
+var releaseNotes = "版本 v7.7.7\n"
+    + "更新日志:\n"
+    + "* 新增 若干Bug\n";
+dialogs.build({
+    title: "发现新版本",
+    content: releaseNotes,
+    positive: "立即下载",
+    negative: "取消",
+    neutral: "到浏览器下载"
+})
+    .on("positive", download)
+    .on("neutral", () => {
+        app.openUrl("https://www.autojs.org");
+    })
+    .show();
+
+var downloadDialog = null;
+var downloadId = -1;
+
+function download(){
+    downloadDialog = dialogs.build({
+        title: "下载中...",
+        positive: "暂停",
+        negative: "取消",
+        progress: {
+            max: 100,
+            showMinMax: true
+        },
+        autoDismiss: false
+    })
+        .on("positive", ()=>{
+            if(downloadDialog.getActionButton("positive") == "暂停"){
+                stopDownload();
+                downloadDialog.setActionButton("positive", "继续");
+            }else{
+                startDownload();
+                downloadDialog.setActionButton("positive", "暂停");
+            }
+        })
+        .on("negative", ()=>{
+            stopDownload();
+            downloadDialog.dismiss();
+            downloadDialog = null;
+        })
+        .show();
+    startDownload();
+}
+
+function startDownload(){
+    downloadId = setInterval(()=>{
+        var p = downloadDialog.getProgress();
+        if(p >= 100){
+            stopDownload();
+            downloadDialog.dismiss();
+            downloadDialog = null;
+            toast("下载完成");
+        }else{
+            downloadDialog.setProgress(p + 1);
+        }
+    }, 100);
+}
+
+function stopDownload(){
+    clearInterval(downloadId);
+}
+
+```
 选项properties可供配置的项目为:
 * `title` {string} 对话框标题
 * `titleColor` {string} | {number} 对话框标题的颜色

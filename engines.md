@@ -233,3 +233,30 @@ e.getEngine().emit("say", "你好");
 - 返回 {Array}
 
 返回一个字符串数组表示脚本运行时模块寻找的路径。
+## 实例
+运行脚本
+```js
+
+var scriptsPath = "/sdcard/脚本/";
+if(!files.exists(scriptsPath)){
+    scriptsPath = "/sdcard/Scripts/";
+}
+var scriptFiles = files.listDir(scriptsPath, function(name){
+    return name.endsWith(".js");
+});
+var i = dialogs.singleChoice("请选择要运行的脚本", scriptFiles);
+if(i < 0){
+    exit();
+}
+var path = files.join(scriptsPath, scriptFiles[i]);
+engines.execScriptFile(path);
+```
+运行脚本任务
+```js
+var script = "toast('Hello, Auto.js');" +
+             "sleep(3000);" +
+             "toastLog('略略略');";
+var execution = engines.execScript("Hello",  script); //"Hello"脚本比script的任务先结束
+sleep(1000);
+// execution.getEngine().forceStop();
+```

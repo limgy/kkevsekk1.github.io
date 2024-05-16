@@ -687,6 +687,41 @@ ui.layout(
 
 例如，圆形的 Auto.js 图标：`<img w="100" h="100" circle="true" bg="white" src="http://www.autojs.org/assets/uploads/profile/3-profileavatar.png" />`
 
+```js
+"ui";
+
+ui.layout(
+<scroll>
+    <vertical bg="#707070" padding="16">
+        <text text="网络图片" textColor="black" textSize="16sp" marginTop="16"/>
+        <img src="http://www.autojs.org/assets/uploads/profile/3-profileavatar.png"
+            w="100" h="100"/>
+
+        <text text="带边框的图片" textColor="black" textSize="16sp" marginTop="16"/>
+        <img src="http://www.autojs.org/assets/uploads/profile/1-profileavatar.jpeg"
+                w="100" h="100" borderWidth="2dp" borderColor="#202020"/>
+
+        <text text="圆形图片" textColor="black" textSize="16sp" marginTop="16"/>
+        <img src="http://www.autojs.org/assets/uploads/profile/1-profileavatar.jpeg"
+                w="100" h="100" circle="true"/>
+
+        <text text="带边框的圆形图片" textColor="black" textSize="16sp" marginTop="16"/>
+        <img src="http://www.autojs.org/assets/uploads/profile/1-profileavatar.jpeg"
+                w="100" h="100" circle="true" borderWidth="2dp" borderColor="#202020"/>
+
+        <text text="圆角图片" textColor="black" textSize="16sp" marginTop="16"/>
+        <img id="rounded_img" src="http://www.autojs.org/assets/uploads/profile/1-profileavatar.jpeg"
+                w="100" h="100" radius="20dp" scaleType="fitXY"/>
+        <button id="change_img" text="更改图片"/>
+    </vertical>
+</scroll>
+);
+
+ui.change_img.on("click", ()=>{
+    ui.rounded_img.setSource("http://www.autojs.org/assets/uploads/profile/1-profilecover.jpeg");
+});
+```
+
 # 垂直布局: vertical
 
 垂直布局是一种比较简单的布局，会把在它里面的控件按照垂直方向依次摆放，如下图所示：
@@ -809,33 +844,417 @@ ui.layout(
 # 相对布局: relative
 
 # 勾选框控件: checkbox
+```js
+"ui";
+$ui.layout(
+    <frame>
+         <checkbox id="done" marginLeft="4" marginRight="6" checked="false" />        
+    </frame>
+);
+```
 
 # 选择框控件: radio
 
 # 选择框布局: radiogroup
+```js
+"ui";
+
+ui.layout(
+    <vertical padding="16">
+        <checkbox id="cb1" text="复选框"/>
+        <checkbox id="cb2" checked="true" text="勾选的复选框"/>
+        <radiogroup>
+            <radio text="单选框1"/>
+            <radio text="单选框2"/>
+            <radio text="单选框3"/>
+        </radiogroup>
+        <radiogroup mariginTop="16">
+            <radio text="单选框1"/>
+            <radio text="单选框2"/>
+            <radio text="勾选的单选框3" checked="true"/>
+        </radiogroup>
+    </vertical>
+);
+
+ui.cb1.on("check", (checked)=>{
+    if(checked){
+        toast("第一个框被勾选了");
+    }else{
+        toast("第一个框被取消勾选了");
+    }
+});
+```
 
 # 开关控件: switch
 
 # 进度条控件: progressbar
 
 # 拖动条控件: seekbar
+```js
+"ui";
+
+ui.layout(
+    <vertical padding="16">
+        <text text="处理中..." textColor="black" textSize="16sp"/>
+        <progressbar />
+
+        <text text="直线无限进度条" textColor="black" textSize="16sp" marginTop="24"/>
+        <progressbar indeterminate="true" style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"/>
+
+        <text text="直线进度条" textColor="black" textSize="16sp" marginTop="24"/>
+        <progressbar progress="30" style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"/>
+
+        <text text="可调节进度条" textColor="black" textSize="16sp" marginTop="24"/>
+        <seekbar progress="20"/>
+
+        <horizontal gravity="center" marginTop="24">
+            <text id="progress_value" textColor="black" textSize="16sp" margin="8" text="0"/>
+            <progressbar id="progress" w="*" style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"/>
+        </horizontal>
+        <button id="download">开始下载</button>
+    </vertical>
+);
+
+var downloadId = null;
+
+ui.download.click(()=>{
+    if(downloadId != null){
+        stopDownload();
+    }else{
+        startDownload();
+    }
+});
+
+function stopDownload(){
+    ui.download.text("开始下载");
+    clearInterval(downloadId);
+    downloadId = null;
+}
+
+function startDownload(){
+    if(ui.progress.getProgress() == 100){
+        ui.progress.setProgress(0);
+    }
+    ui.download.text("停止下载");
+    downloadId = setInterval(()=>{
+        var p = ui.progress.getProgress();
+        p++;
+        if(p > 100){
+            stopDownload();
+            return;
+        }
+        ui.progress.setProgress(p);
+        ui.progress_value.setText(p.toString());
+    }, 200);
+}
+```
 
 # 下来菜单控件: spinner
+```js
+"ui";
+
+ui.layout(
+    <vertical padding="16">
+        <horizontal>
+            <text textSize="16sp">下拉菜单</text>
+            <spinner id="sp1" entries="选项1|选项2|选项3"/>
+        </horizontal>
+        <horizontal>
+            <text textSize="16sp">对话框菜单</text>
+            <spinner id="sp2" entries="选项4|选项5|选项6" spinnerMode="dialog"/>
+        </horizontal>
+        <button id="ok">确定</button>
+        <button id="select3">选择选项3</button>
+    </vertical>
+);
+
+ui.ok.on("click", ()=>{
+    var i = ui.sp1.getSelectedItemPosition();
+    var j = ui.sp2.getSelectedItemPosition();
+    toast("您的选择是选项" + (i + 1) + "和选项" + (j + 4));
+});
+
+ui.select3.on("click", ()=>{
+    ui.sp1.setSelection(2);
+});
+```
 
 # 时间选择控件: timepicker
 
 # 日期选择控件: datepicker
+```js
+"ui";
+
+ui.layout(
+    <scroll>
+        <vertical padding="16">
+            <text text="日历样式日期选择" textColor="black" textSize="16sp" marginTop="16"/>
+            <datepicker />
+
+            <text text="滑动日期选择" textColor="black" textSize="16sp" marginTop="16"/>
+            <datepicker datePickerMode="spinner"/>
+
+            <text text="时钟样式时间选择" textColor="black" textSize="16sp" marginTop="16"/>
+            <timepicker />
+
+            <text text="滑动时间选择" textColor="black" textSize="16sp" marginTop="16"/>
+            <timepicker timePickerMode="spinner"/>
+
+        </vertical>
+    </scroll>
+)
+```
 
 # 浮动按钮控件: fab
 
 # 标题栏控件: toolbar
+```js
+"ui";
+ui.layout(  
+        <vertical>
+            <appbar>
+                <toolbar id="toolbar" title="标题栏"/>
+            </appbar>
+            </vertical>
+)
+```
 
 # 卡片: card
+```js
+"ui";
+ui.layout(
+    <vertical>
+        <card w="*" h="70" margin="10 5" cardCornerRadius="2dp"
+            cardElevation="1dp" gravity="center_vertical">
+            <vertical padding="18 8" h="auto">
+                <text text="写操作系统作业" textColor="#222222" textSize="16sp"/>
+                <text text="明天第1～2节" textColor="#999999" textSize="14sp"/>
+            </vertical>
+            <View bg="#f44336" h="*" w="100"/>
+        </card>        
+    </vertical>
+);
+```
 
 # 抽屉布局: drawer
 
 # 列表: list
+事件: item_click
+当用户点击一个List中的项时会触发该事件。
+item {any} 被点击的列表项的数据
+i {number} 被点击的列表项的位置
+itemView {View} 被点击的列表项的View
+listView {View} 当前列表控件
+当用户点击一个List中的项时会触发该事件。
+```js
+"ui";
+ui.layout(
+    <frame>
+        <list id="list">
+            <vertical>
+                <text id="name" textSize="16sp" textColor="#000000" text="姓名: {{name}}"/>
+                <text id="age" textSize="16sp" textColor="#000000" text="年龄: {{age}}岁"/>
+                <button id="deleteItem" text="删除"/>
+            </vertical>
+        </list>
+    </frame>
+);
 
+var items = [
+    {name: "小明", age: 18}, {name: "小红", age: 30},
+    {name: "小东", age: 19}, {name: "小强", age: 31},
+    {name: "小满", age: 20}, {name: "小一", age: 32},
+    {name: "小和", age: 21}, {name: "小二", age: 1},
+    {name: "小贤", age: 22}, {name: "小三", age: 2},
+    {name: "小伟", age: 23}, {name: "小四", age: 3},
+    {name: "小黄", age: 24}, {name: "小五", age: 4},
+    {name: "小健", age: 25}, {name: "小六", age: 5},
+    {name: "小啦", age: 26}, {name: "小七", age: 6},
+    {name: "小哈", age: 27}, {name: "小八", age: 7},
+    {name: "小啊", age: 28}, {name: "小九", age: 8},
+    {name: "小啪", age: 29}, {name: "小十", age: 9}
+];
+
+ui.list.setDataSource(items);
+
+ui.list.on("item_click", function(item, i, itemView, listView){
+    toast("被点击的人名字为: " + item.name + "，年龄为: " + item.age);
+});
+
+ui.list.on("item_bind", function(itemView, itemHolder){
+    itemView.deleteItem.on("click", function(){
+        let item = itemHolder.item;
+        toast("被删除的人名字为: " + item.name + "，年龄为: " + item.age);
+        items.splice(itemHolder.position, 1);
+    });
+})
+
+```
+事件: item_long_click
+event {object} 事件，字段有：
+consumed {boolean} 设置此事件是否被消费
+view {View} 此事件对应的View
+item {any} 被点击的列表项的数据
+i {number} 被点击的列表项的位置
+itemView {View} 被点击的列表项的View
+listView {View} 当前列表控件
+当用户长按一个List中的项时会触发该事件。
+
+事件: item_bind
+itemView {View} 当前列表项的View
+itemHolder {object} 当前列表项的管理对象，可动态获取列表项的位置和数据。
+item {any} 获取列表项的数据
+position {number} 获取列表项的位置
+当列表创建一个新的列表项的View时触发该事件。实际上列表控件不会为列表控件的每个项目创建一个单独的View，假设列表为2000个，屏幕最多显示10个，那么列表控件只会创建10个左右的View。
+```js
+"ui";
+$ui.layout(
+    <frame>
+        <list id="list">
+            <vertical>
+                <text id="name" textSize="16sp" textColor="#000000" text="姓名: {{this.name}}"/>
+                <checkbox id="checkbox" checked="{{this.checked}}"/>
+            </vertical>
+        </list>
+    </frame>
+);
+var items = [
+    {
+        name: "小明",
+        checked: false
+    }, {
+        name: "小红",
+        checked: false
+    }
+];
+$ui.list.setDataSource(items);
+
+$ui.list.on("item_bind", function(itemView, itemHolder) {
+    itemView.checkbox.on("check", function (checked) {
+        let item = itemHolder.item;
+        item.checked = checked;
+        console.log(item);
+    });
+});
+```
+例如做一个待办事项
+```js
+"ui";
+
+importClass(android.graphics.Paint);
+
+ui.layout(
+    <frame>
+        <vertical>
+            <appbar>
+                <toolbar id="toolbar" title="Todo" />
+            </appbar>
+            <list id="todoList">
+                <card w="*" h="70" margin="10 5" cardCornerRadius="2dp"
+                    cardElevation="1dp" foreground="?selectableItemBackground">
+                    <horizontal gravity="center_vertical">
+                        <View bg="{{this.color}}" h="*" w="10" />
+                        <vertical padding="10 8" h="auto" w="0" layout_weight="1">
+                            <text id="title" text="{{this.title}}" textColor="#222222" textSize="16sp" maxLines="1" />
+                            <text text="{{this.summary}}" textColor="#999999" textSize="14sp" maxLines="1" />
+                        </vertical>
+                        <checkbox id="done" marginLeft="4" marginRight="6" checked="{{this.done}}" />
+                    </horizontal>
+                </card>
+            </list>
+        </vertical>
+        <fab id="add" w="auto" h="auto" src="@drawable/ic_add_black_48dp"
+            margin="16" layout_gravity="bottom|right" tint="#ffffff" />
+    </frame>
+);
+
+var materialColors = ["#e91e63", "#ab47bc", "#5c6bc0", "#7e57c2", "##2196f3", "#00bcd4",
+    "#26a69a", "#4caf50", "#8bc34a", "#ffeb3b", "#ffa726", "#78909c", "#8d6e63"];
+
+var storage = storages.create("todoList");
+//从storage获取todo列表
+var todoList = storage.get("items", [
+    {
+        title: "写操作系统作业",
+        summary: "明天第1～2节",
+        color: "#f44336",
+        done: false
+    },
+    {
+        title: "给ui模式增加若干Bug",
+        summary: "无限期",
+        color: "#ff5722",
+        done: false
+    },
+    {
+        title: "发布Auto.js 5.0.0正式版",
+        summary: "2019年1月",
+        color: "#4caf50",
+        done: false
+    },
+    {
+        title: "完成毕业设计和论文",
+        summary: "2019年4月",
+        color: "#2196f3",
+        done: false
+    }
+]);;
+
+ui.todoList.setDataSource(todoList);
+
+ui.todoList.on("item_bind", function (itemView, itemHolder) {
+    //绑定勾选框事件
+    itemView.done.on("check", function (checked) {
+        let item = itemHolder.item;
+        item.done = checked;
+        let paint = itemView.title.paint;
+        //设置或取消中划线效果
+        if (checked) {
+            paint.flags |= Paint.STRIKE_THRU_TEXT_FLAG;
+        } else {
+            paint.flags &= ~Paint.STRIKE_THRU_TEXT_FLAG;
+        }
+        itemView.title.invalidate();
+    });
+});
+
+ui.todoList.on("item_click", function (item, i, itemView, listView) {
+    itemView.done.checked = !itemView.done.checked;
+});
+
+ui.todoList.on("item_long_click", function (e, item, i, itemView, listView) {
+    confirm("确定要删除" + item.title + "吗？")
+        .then(ok => {
+            if (ok) {
+                todoList.splice(i, 1);
+            }
+        });
+    e.consumed = true;
+});
+
+//当离开本界面时保存todoList
+ui.emitter.on("pause", () => {
+    storage.put("items", todoList);
+});
+
+ui.add.on("click", () => {
+    dialogs.rawInput("请输入标题")
+        .then(title => {
+            if (!title) {
+                return;
+            }
+            dialogs.rawInput("请输入期限", "明天")
+                .then(summary => {
+                    todoList.push({
+                        title: title,
+                        summary: summary,
+                        color: materialColors[random(0, materialColors.length - 1)]
+                    });
+                });
+        })
+});
+
+```
 # Tab: tab
 
 # ui
@@ -942,5 +1361,317 @@ ui.statusBarColor("#000000");
 # Drawables
 
 # 颜色
+如“画x*x+3*x-4的曲线”
+```js
+"ui";
+//ui布局为一块画布和一些函数调整控件
+ui.layout(
+    <vertical>
+        <linear>
+            <input id="fx" textSize="16sp" text="x*x+3*x-4" layout_weight="1"/>
+            <button id="ok" w="50dp"/>
+        </linear>
+        <linear>
+            <button id="left" text="←" layout_weight="1"/>
+            <button id="right" text="→" layout_weight="1"/>
+            <button id="up" text="↓" layout_weight="1"/>
+            <button id="down" text="↑" layout_weight="1"/>
+            <button id="zoom_in" text="+" layout_weight="1"/>
+            <button id="zoom_out" text="-" layout_weight="1"/>
+        </linear>
+        <canvas id="board" w="*" h="*"/>
+    </vertical>
+);
 
+//函数表达式
+var f = "x*x+3*x-4";
+//绘制区间
+var minX = -5;
+var maxX = 5;
+var minY;
+var h = 1;
+var w = 1;
+
+//画笔
+var paint = new Paint();
+paint.setStrokeWidth(2);
+
+ui.board.on("draw", function(canvas){
+    w = canvas.getWidth();
+    h = canvas.getHeight();
+    if(minY == undefined){
+        minY = -(maxX - minX) * h / w / 2;
+    }
+    //计算y轴区间上限
+    var maxY = minY + (maxX - minX) * h / w;
+    //设置画笔颜色为黑色
+    paint.setColor(colors.parseColor("#000000"));
+    //绘制两个坐标轴
+    var x0 = parseInt(- minX / (maxX - minX) * w);
+    canvas.drawLine(x0, 0, x0, h, paint);
+    var y0 = parseInt(h + minY / (maxY - minY) * h);
+    canvas.drawLine(0, y0, w, y0, paint);
+    //设置画笔颜色为红色
+    paint.setColor(colors.parseColor("#ff0000"));
+    //绘制图像
+    for(var i = 0; i < w; i++){
+        var x = minX + i / w * (maxX - minX);
+        var y = eval(f);
+        var j = h - (y - minY) / (maxY - minY) * h;
+        canvas.drawPoint(i, j, paint);
+    }
+});
+
+ui.ok.click(()=>{
+    f = String(ui.fx.text());
+});
+
+ui.left.click(()=>{
+    var d = maxX - minX;
+    maxX -= d / 10;
+    minX -= d / 10;
+});
+
+ui.right.click(()=>{
+    var d = maxX - minX;
+    maxX += d / 10;
+    minX += d / 10;
+});
+
+ui.up.click(()=>{
+    var d = maxX - minX;
+    minY += d / 8;
+});
+
+ui.down.click(()=>{
+    var d = maxX - minX;
+    minY -= d / 8;
+});
+
+ui.zoom_in.click(()=>{
+    var d = maxX - minX;
+    var a = (maxX + minX) / 2;
+    maxX = a + d;
+    minX = a - d;
+
+    minY *= (maxX - minY) / d * h / w;
+});
+
+ui.zoom_out.click(()=>{
+    var d = maxX - minX;
+    maxX -= d / 2;
+    minX += d / 2;
+});
+
+```
 **(完善中...)**
+# “登录界面实例”
+```js
+"ui";
+
+showLoginUI();
+ui.statusBarColor("#000000")
+
+//显示登录界面
+function showLoginUI(){
+    ui.layout(
+      <frame>
+        <vertical h="auto" align="center" margin="0 50">
+          <linear>
+             <text w="56" gravity="center" color="#111111" size="16">用户名</text>
+             <input id="name" w="*" h="40"/>
+          </linear>
+          <linear>
+             <text w="56" gravity="center" color="#111111" size="16">密码</text>
+             <input id="password" w="*" h="40" password="true"/>
+          </linear>
+          <linear gravity="center">
+             <button id="login" text="登录"/>
+             <button id="register" text="注册"/>
+          </linear>
+        </vertical>
+      </frame>
+    );
+
+    ui.login.on("click", () => {
+       toast("您输入的用户名为" + ui.name.text() + " 密码为" + ui.password.text());
+    });
+    ui.register.on("click", () => showRegisterUI());
+}
+
+//显示注册界面
+function showRegisterUI(){
+    ui.layout(
+      <frame>
+        <vertical h="auto" align="center" margin="0 50">
+          <linear>
+             <text w="56" gravity="center" color="#111111" size="16">用户名</text>
+             <input w="*" h="40"/>
+          </linear>
+          <linear>
+             <text w="56" gravity="center" color="#111111" size="16">密码</text>
+             <input w="*" h="40" password="true"/>
+          </linear>
+          <linear>
+             <text w="56" gravity="center" color="#111111" size="16">邮箱</text>
+             <input w="*" h="40" inputType="textEmailAddress"/>
+          </linear>
+          <linear gravity="center">
+             <button>确定</button>
+             <button id="cancel">取消</button>
+          </linear>
+        </vertical>
+      </frame>
+    );
+    ui.cancel.on("click", () => showLoginUI());
+}
+```
+## "界面模板"实例
+```js
+"ui";
+
+var color = "#009688";
+
+ui.layout(
+    <drawer id="drawer">
+        <vertical>
+            <appbar>
+                <toolbar id="toolbar" title="示例"/>
+                <tabs id="tabs"/>
+            </appbar>
+            <viewpager id="viewpager">
+                <frame>
+                    <text text="第一页内容" textColor="black" textSize="16sp"/>
+                </frame>
+                <frame>
+                    <text text="第二页内容" textColor="red" textSize="16sp"/>
+                </frame>
+                <frame>
+                    <text text="第三页内容" textColor="green" textSize="16sp"/>
+                </frame>
+            </viewpager>
+        </vertical>
+        <vertical layout_gravity="left" bg="#ffffff" w="280">
+            <img w="280" h="200" scaleType="fitXY" src="http://images.shejidaren.com/wp-content/uploads/2014/10/023746fki.jpg"/>
+            <list id="menu">
+                <horizontal bg="?selectableItemBackground" w="*">
+                    <img w="50" h="50" padding="16" src="{{this.icon}}" tint="{{color}}"/>
+                    <text textColor="black" textSize="15sp" text="{{this.title}}" layout_gravity="center"/>
+                </horizontal>
+            </list>
+        </vertical>
+    </drawer>
+);
+
+
+//创建选项菜单(右上角)
+ui.emitter.on("create_options_menu", menu=>{
+    menu.add("设置");
+    menu.add("关于");
+});
+//监听选项菜单点击
+ui.emitter.on("options_item_selected", (e, item)=>{
+    switch(item.getTitle()){
+        case "设置":
+            toast("还没有设置");
+            break;
+        case "关于":
+            alert("关于", "Auto.js界面模板 v1.0.0");
+            break;
+    }
+    e.consumed = true;
+});
+activity.setSupportActionBar(ui.toolbar);
+
+//设置滑动页面的标题
+ui.viewpager.setTitles(["标签一", "标签二", "标签三"]);
+//让滑动页面和标签栏联动
+ui.tabs.setupWithViewPager(ui.viewpager);
+
+//让工具栏左上角可以打开侧拉菜单
+ui.toolbar.setupWithDrawer(ui.drawer);
+
+ui.menu.setDataSource([
+  {
+      title: "选项一",
+      icon: "@drawable/ic_android_black_48dp"
+  },
+  {
+      title: "选项二",
+      icon: "@drawable/ic_settings_black_48dp"
+  },
+  {
+      title: "选项三",
+      icon: "@drawable/ic_favorite_black_48dp"
+  },
+  {
+      title: "退出",
+      icon: "@drawable/ic_exit_to_app_black_48dp"
+  }
+]);
+
+ui.menu.on("item_click", item => {
+    switch(item.title){
+        case "退出":
+            ui.finish();
+            break;
+    }
+})
+```
+## "用户调查"实例
+```js
+"ui";
+
+ui.layout(
+    <vertical>
+        <text textSize="18sp" textColor="#000000" margin="20" textStyle="bold">
+            关于Auto.js的用户调查
+        </text>
+        <ScrollView>
+            <vertical>
+                <text textSize="16sp" margin="8">1. 您的年龄是?</text>
+                <input text="18" inputType="number" margin="0 16"/>
+                <text textSize="16sp" margin="8">2. 您用过其他类似软件(脚本精灵，按键精灵等)吗?</text>
+                <radiogroup margin="0 16">
+                    <radio text="没有用过"/>
+                    <radio text="用过"/>
+                    <radio text="用过，感觉不好用"/>
+                    <radio text="没有Root权限无法使用"/>
+                </radiogroup>
+                <text textSize="16sp" margin="8">3. 您使用Auto.js通常用于做什么?(多选)</text>
+                <checkbox text="游戏辅助" marginLeft="16"/>
+                <checkbox text="点赞" marginLeft="16"/>
+                <checkbox text="日常生活工作辅助" marginLeft="16"/>
+                <checkbox text="练习编程" marginLeft="16"/>
+                <checkbox text="自动化测试" marginLeft="16"/>
+                <linear>
+                    <checkbox text="其他" marginLeft="16"/>
+                    <input w="*" margin="0 16"/>
+                </linear>
+                <text textSize="16sp" margin="8">4. 您更喜欢以下哪个图标?</text>
+                <radiogroup margin="0 16">
+                    <radio/>
+                    <img w="100" h="100" margin="0 16" src="http://www.autojs.org/assets/uploads/profile/3-profileavatar.png"/>
+                    <radio/>
+                    <img w="100" h="100" margin="0 16" src="http://www.autojs.org/assets/uploads/files/1511945512596-autojs_logo.png"/>
+                </radiogroup>
+                <text textSize="16sp" margin="8">5. 您是什么时候开始使用Auto.js的呢?</text>
+                <datepicker margin="4 16" datePickerMode="spinner"/>
+                <text textSize="16sp" margin="8">6. 您用过下面这个Auto.js的论坛吗?</text>
+                <webview id="webview" h="300" margin="0 16"/>
+                <radiogroup marginLeft="16" marginTop="16">
+                    <radio text="没有用过"/>
+                    <radio text="用过"/>
+                    <radio text="用过，感觉不好用"/>
+                </radiogroup>
+                <linear gravity="center">
+                    <button margin="16">提交</button>
+                    <button margin="16">放弃</button>
+                </linear>
+            </vertical>
+        </ScrollView>
+    </vertical>
+)
+
+ui.webview.loadUrl("http://www.autojs.org");
+```
