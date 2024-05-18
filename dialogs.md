@@ -552,7 +552,7 @@ dialogs.build({
     negative: "取消",
     inputPrefill: ""
 }).on("input_change", (text, dialog)=>{
-    toast("你输入的是" + text);
+    toast("你输入的是" + text); //输出的“text”不是输入框的文字
 }).show();
 ```
 
@@ -571,3 +571,19 @@ dialogs.build({
     * `positive` 
     * `negative`
     * `neutral`
+
+```js
+
+
+var d = dialogs.build({
+    title: '进度条演示',
+    progress: {
+        max: 100
+    },
+    positive: '确定按钮',
+    negative: "取消"
+}).show()
+sleep(2000)
+log(d.getActionButton('positive'))
+log(d.getActionButton('negative'))
+```

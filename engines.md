@@ -231,6 +231,19 @@ e.getEngine().emit("say", "你好");
 ## getPath()
 
 - 返回 {Array}
+```js
+//运行脚本
+var e = engines.execScriptFile("/sdcard/脚本/demo.js",{
+    loopTimes: 10,
+    interval: 3000,
+
+});
+//等待脚本启动
+sleep(2000);
+
+log(e.getConfig().interval)
+log(e.getConfig().loopTimes)
+```
 
 返回一个字符串数组表示脚本运行时模块寻找的路径。
 ## 实例
